@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Management — Login</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="login-card" aria-labelledby="login-title">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">SM</div>
+        <h1 id="login-title" class="title">Student Management</h1>
+        <p class="subtitle">Sign in to continue</p>
+      </div>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="username" required placeholder="you@example.edu" />
+          <p class="error" id="email-error" role="alert" aria-live="polite"></p>
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="password">Password</label>
+            <button type="button" id="toggle-password" class="link-btn" aria-controls="password" aria-pressed="false">Show</button>
+          </div>
+          <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Your password" />
+          <p class="error" id="password-error" role="alert" aria-live="polite"></p>
+        </div>
+
+        <div class="options">
+          <label class="checkbox">
+            <input type="checkbox" id="remember" name="remember" />
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="muted">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="primary">Login</button>
+        <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
+      </form>
+
+      <p class="disclaimer">This is a demo login page. Do not enter real credentials.</p>
+    </section>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>
