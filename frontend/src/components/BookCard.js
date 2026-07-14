@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import styles from './BookCard.module.css';
+
+const API = process.env.REACT_APP_API_URL || '/api';
 
 const GENRE_COLORS = {
   Fiction: { bg: '#eff6ff', color: '#1d4ed8' },
@@ -11,8 +14,41 @@ const GENRE_COLORS = {
   Science: { bg: '#f0fdfa', color: '#115e59' },
 };
 
-export default function BookCard({ book }) {
+export default function BookCard({ book, isAdmin, token, onDelete, onUpdate }) {
+  const [busy, setBusy] = useState(false);
   const genreStyle = GENRE_COLORS[book.genre] || { bg: '#f1f5f9', color: '#475569' };
+
+  async function handleToggleAvailability() {
+    setBusy(true);
+    try {
+      const res = await fetch(`${API}/books/${book.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ available: !book.available }),
+      });
+      const data = await res.json();
+      if (res.ok && onUpdate) onUpdate(data.book);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!window.confirm(`Delete "${book.title}"? This cannot be undone.`)) return;
+    setBusy(true);
+    try {
+      const res = await fetch(`${API}/books/${book.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok && onDelete) onDelete(book.id);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <div className={styles.card}>
@@ -41,6 +77,27 @@ export default function BookCard({ book }) {
           <span className={styles.metaItem}>📅 {book.year}</span>
           <span className={styles.metaItem}>📄 {book.pages} pages</span>
         </div>
+
+        {isAdmin && (
+          <div className={styles.adminActions}>
+            <button
+              className={`${styles.adminBtn} ${book.available ? styles.checkoutBtn : styles.returnBtn}`}
+              onClick={handleToggleAvailability}
+              disabled={busy}
+              aria-label={book.available ? 'Mark as checked out' : 'Mark as available'}
+            >
+              {book.available ? '⬆ Check Out' : '⬇ Return'}
+            </button>
+            <button
+              className={`${styles.adminBtn} ${styles.deleteBtn}`}
+              onClick={handleDelete}
+              disabled={busy}
+              aria-label="Delete book"
+            >
+              🗑 Delete
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

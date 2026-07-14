@@ -152,8 +152,42 @@ function reset() {
       description: 'A portrayal of the Jazz Age set in Long Island.',
       available: true,
     },
+    {
+      id: 2,
+      title: '1984',
+      author: 'George Orwell',
+      genre: 'Science Fiction',
+      year: 1949,
+      pages: 328,
+      description: 'A dystopian social science fiction novel.',
+      available: true,
+    },
+    {
+      id: 3,
+      title: 'To Kill a Mockingbird',
+      author: 'Harper Lee',
+      genre: 'Classic',
+      year: 1960,
+      pages: 281,
+      description: "A Pulitzer Prize-winning novel.",
+      available: false,
+    },
   ];
-  nextId = 2;
+  nextId = 4;
 }
 
-module.exports = { getAll, getById, getFiltered, create, reset };
+function update(id, data) {
+  const idx = books.findIndex((b) => b.id === id);
+  if (idx === -1) return null;
+  books[idx] = { ...books[idx], ...data };
+  return books[idx];
+}
+
+function remove(id) {
+  const idx = books.findIndex((b) => b.id === id);
+  if (idx === -1) return false;
+  books.splice(idx, 1);
+  return true;
+}
+
+module.exports = { getAll, getById, getFiltered, create, update, remove, reset };

@@ -54,6 +54,15 @@ export default function BooksPage() {
     setShowModal(false);
   }
 
+  function handleBookDeleted(id) {
+    setBooks((prev) => prev.filter((b) => b.id !== id));
+    setTotal((t) => t - 1);
+  }
+
+  function handleBookUpdated(updatedBook) {
+    setBooks((prev) => prev.map((b) => (b.id === updatedBook.id ? updatedBook : b)));
+  }
+
   const stats = {
     total: books.length,
     available: books.filter((b) => b.available).length,
@@ -144,7 +153,14 @@ export default function BooksPage() {
         ) : (
           <div className={styles.grid}>
             {books.map((book) => (
-              <BookCard key={book.id} book={book} />
+              <BookCard
+                key={book.id}
+                book={book}
+                isAdmin={user?.role === 'admin'}
+                token={token}
+                onDelete={handleBookDeleted}
+                onUpdate={handleBookUpdated}
+              />
             ))}
           </div>
         )}

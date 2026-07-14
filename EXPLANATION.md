@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **Library Management System (LMS)** is a full-stack web application that enables users to browse, search, and manage a library's book catalog. It includes role-based authentication, a RESTful API backend, and a modern React frontend.
+The **Library Management System (LMS)** is a full-stack web application that allows users to browse a book catalogue and allows administrators to manage the catalogue. It consists of a **Node.js/Express REST API** (backend) and a **React single-page application** (frontend).
 
 ---
 
@@ -10,301 +10,203 @@ The **Library Management System (LMS)** is a full-stack web application that ena
 
 ```
 CloudAgentPR/
-├── backend/              # Node.js + Express REST API
+├── backend/                 # Express REST API (port 5000)
 │   ├── src/
-│   │   ├── app.js        # Express app factory
-│   │   ├── server.js     # HTTP server entry point
+│   │   ├── app.js           # Express app factory (routes, middleware)
+│   │   ├── server.js        # HTTP listener entry-point
 │   │   ├── routes/
-│   │   │   ├── auth.js   # Login & register endpoints
-│   │   │   └── books.js  # Books CRUD endpoints
+│   │   │   ├── auth.js      # POST /api/auth/login  &  POST /api/auth/register
+│   │   │   └── books.js     # CRUD endpoints for /api/books
 │   │   ├── middleware/
-│   │   │   └── auth.js   # JWT authentication middleware
+│   │   │   └── auth.js      # JWT verification middleware (authenticate)
 │   │   └── data/
-│   │       ├── users.js  # In-memory user store
-│   │       └── books.js  # In-memory books store
+│   │       ├── users.js     # In-memory user store (seeded with 2 demo users)
+│   │       └── books.js     # In-memory book store (10 seed books + CRUD helpers)
 │   └── __tests__/
-│       ├── auth.test.js  # Auth API tests (Supertest + Jest)
-│       └── books.test.js # Books API tests (Supertest + Jest)
+│       ├── auth.test.js     # Supertest suite for Auth API (9 tests)
+│       └── books.test.js    # Supertest suite for Books API (22 tests)
 │
-├── frontend/             # React 18 SPA
-│   ├── public/
-│   │   └── index.html
+├── frontend/                # React SPA (port 3000)
 │   └── src/
-│       ├── App.js              # Root component & routing
+│       ├── App.js           # Root component — renders LoginPage or BooksPage
 │       ├── context/
-│       │   └── AuthContext.js  # Global auth state (Context API)
+│       │   └── AuthContext.js   # React context: user, token, login(), logout()
 │       ├── pages/
-│       │   ├── LoginPage.js    # Login / Register forms
-│       │   └── BooksPage.js    # Book catalog with search & filters
+│       │   ├── LoginPage.js / .module.css   # Sign-in & Register forms
+│       │   └── BooksPage.js / .module.css   # Catalogue view with search & filters
 │       ├── components/
-│       │   ├── Navbar.js       # Top navigation with user info
-│       │   ├── BookCard.js     # Individual book display card
-│       │   └── AddBookModal.js # Admin-only book creation modal
+│       │   ├── Navbar.js / .module.css      # Top navigation bar
+│       │   ├── BookCard.js / .module.css    # Single book tile (with admin actions)
+│       │   └── AddBookModal.js / .module.css # Admin modal to create a book
 │       └── __tests__/
-│           └── App.test.js     # Frontend tests (RTL + Jest)
+│           └── App.test.js  # React Testing Library suite (25 tests)
 │
-├── EXPLANATION.md        # This document
-└── BREAKING_CHANGES.md   # Breaking changes log
+├── EXPLANATION.md           # This document
+├── BREAKING_CHANGES.md      # Breaking change log
+└── README.md                # Quick-start guide
 ```
 
 ---
 
-## Technology Stack
+## Backend — Deep Dive
 
-| Layer | Technology | Purpose |
-|---|---|---|
-| Backend runtime | Node.js 18+ | Server-side JavaScript |
-| Backend framework | Express 4 | HTTP routing & middleware |
-| Authentication | JSON Web Tokens (JWT) | Stateless session management |
-| Password hashing | bcryptjs | Secure password storage |
-| Frontend framework | React 18 | UI component library |
-| State management | React Context API | Global authentication state |
-| Styling | CSS Modules | Scoped, conflict-free styles |
-| Testing (backend) | Jest + Supertest | API integration tests |
-| Testing (frontend) | Jest + React Testing Library | UI component tests |
+### Technology Stack
 
----
-
-## Backend API Reference
-
-### Base URL
-`http://localhost:5000/api`
-
-### Authentication Endpoints
-
-#### `POST /api/auth/login`
-Authenticates a user and returns a JWT token.
-
-**Request body:**
-```json
-{
-  "email": "alice@library.com",
-  "password": "password123"
-}
-```
-
-**Success response (200):**
-```json
-{
-  "token": "<jwt>",
-  "user": {
-    "id": 1,
-    "name": "Alice Johnson",
-    "email": "alice@library.com",
-    "role": "admin"
-  }
-}
-```
-
-**Error responses:**
-- `400` — missing email or password
-- `401` — invalid credentials
-
----
-
-#### `POST /api/auth/register`
-Registers a new user account.
-
-**Request body:**
-```json
-{
-  "name": "New User",
-  "email": "new@example.com",
-  "password": "securepass"
-}
-```
-
-**Success response (201):** Same shape as login response.
-
-**Error responses:**
-- `400` — missing required fields
-- `409` — email already registered
-
----
-
-### Books Endpoints
-
-> All books endpoints require the `Authorization: Bearer <token>` header.
-
-#### `GET /api/books`
-Returns all books, with optional query filters.
-
-**Query parameters:**
-
-| Parameter | Type | Description |
-|---|---|---|
-| `search` | string | Filter by title or author (case-insensitive) |
-| `genre` | string | Filter by exact genre |
-| `available` | `true`/`false` | Filter by availability status |
-
-**Success response (200):**
-```json
-{
-  "books": [ ...book objects... ],
-  "total": 10
-}
-```
-
----
-
-#### `GET /api/books/:id`
-Returns a single book by ID.
-
-**Success response (200):** `{ "book": { ...book object... } }`
-
-**Error response:**
-- `404` — book not found
-
----
-
-#### `POST /api/books`
-Creates a new book. **Admin role required.**
-
-**Request body:**
-```json
-{
-  "title": "New Book",
-  "author": "Author Name",
-  "genre": "Fiction",
-  "year": 2024,
-  "pages": 320,
-  "description": "A brief synopsis.",
-  "available": true
-}
-```
-
-**Success response (201):** `{ "book": { ...created book... } }`
-
-**Error responses:**
-- `400` — missing title or author
-- `403` — user is not an admin
-
----
-
-## Frontend Pages
-
-### Login Page (`/`)
-- Two-tab interface: **Sign In** and **Register**
-- Demo account cards for quick credential fill
-- JWT token stored in `localStorage` on success
-- Redirects to Books page after authentication
-
-### Books Catalog Page (authenticated)
-- **Stats bar:** Total books, available count, checked-out count
-- **Search:** Real-time search across title and author fields (debounced 300ms)
-- **Genre filter:** Dropdown to filter by genre category
-- **Availability filter:** Toggle to show all / available / checked-out
-- **Book cards:** Each card shows genre badge, availability badge, title, author, description excerpt, publication year, and page count
-- **Add Book modal:** Accessible only to admin users; sends `POST /api/books`
-
----
-
-## Authentication Flow
-
-```
-User submits credentials
-        │
-        ▼
-POST /api/auth/login ──► bcrypt.compare(password, hash)
-        │
-        ├─ Match? → sign JWT → return { token, user }
-        │
-        └─ No match? → 401 Unauthorized
-
-Client stores token in localStorage
-        │
-        ▼
-All subsequent API requests include:
-  Authorization: Bearer <token>
-        │
-        ▼
-authenticate() middleware → jwt.verify(token, secret)
-        │
-        ├─ Valid? → attach req.user → next()
-        └─ Invalid/Expired? → 401 Unauthorized
-```
-
----
-
-## Security Considerations
-
-| Concern | Mitigation |
+| Dependency | Purpose |
 |---|---|
-| Password storage | bcryptjs with cost factor 10 — passwords are never stored in plaintext |
-| Token forgery | JWT signed with a secret key; signature is verified on every request |
-| Token expiry | Tokens expire in 2 hours, limiting the window for stolen token abuse |
-| Privilege escalation | Role (`admin`/`user`) is embedded in the JWT payload and checked server-side |
-| Input validation | Required fields are validated at the controller level before processing |
-| CORS | Configured with the `cors` package; restrict to known origins in production |
+| `express` | HTTP framework / router |
+| `cors` | Allow cross-origin requests from the React dev server |
+| `jsonwebtoken` | Issue and verify JWT access tokens |
+| `bcryptjs` | Hash and compare user passwords |
+| `jest` + `supertest` | Unit/integration testing |
+
+### Authentication Flow
+
+1. **POST /api/auth/login** — client sends `{email, password}`. The server looks up the user, calls `bcrypt.compare`, and on success returns a signed JWT (2-hour TTL) plus a safe user object (no password hash).
+2. **POST /api/auth/register** — client sends `{name, email, password}`. The server hashes the password, pushes the new user into the in-memory store, and returns the same JWT + user shape.
+3. **JWT verification** — every protected endpoint passes through the `authenticate` middleware (`middleware/auth.js`), which reads the `Authorization: Bearer <token>` header and calls `jwt.verify`. On success `req.user` is populated with the decoded payload.
+
+### Books API
+
+| Method | Path | Auth | Role | Description |
+|---|---|---|---|---|
+| GET | `/api/books` | ✅ | any | List all books; supports `?search=`, `?genre=`, `?available=true` |
+| GET | `/api/books/:id` | ✅ | any | Fetch a single book by ID |
+| POST | `/api/books` | ✅ | admin | Create a new book |
+| PATCH | `/api/books/:id` | ✅ | admin | Partially update a book (any field) |
+| DELETE | `/api/books/:id` | ✅ | admin | Remove a book permanently |
+
+### In-Memory Data Store
+
+Because this demo project has no database, both `users.js` and `books.js` export JavaScript arrays. The `books.js` module exposes:
+
+- `getAll()` — return every book
+- `getById(id)` — find by numeric ID
+- `getFiltered({search, genre, available})` — filtered list used by `GET /api/books`
+- `create(data)` — append and return new book with auto-incremented ID
+- `update(id, data)` — merge partial data into existing book, return updated record
+- `remove(id)` — splice book from array, return `true`/`false`
+- `reset()` — restore seed data (used by the test suite's `beforeEach`)
 
 ---
 
-## Running the Project Locally
+## Frontend — Deep Dive
+
+### Technology Stack
+
+| Dependency | Purpose |
+|---|---|
+| `react` / `react-dom` | UI rendering |
+| `react-scripts` (CRA) | Build toolchain, dev server, test runner |
+| `@testing-library/react` | Component-level tests |
+
+### State Management
+
+Global auth state is held in **AuthContext** (`context/AuthContext.js`):
+
+```js
+const { user, token, login, logout } = useAuth();
+```
+
+`login(user, jwt)` persists both values to `localStorage` so that a page refresh does not log the user out. `logout()` clears them. The context is initialised by reading from `localStorage`, so the app is immediately in the correct state on mount.
+
+### Routing
+
+There is no external router library. `App.js` conditionally renders:
+
+```jsx
+return user ? <BooksPage /> : <LoginPage />;
+```
+
+This is sufficient for the two-page flow: unauthenticated → login; authenticated → catalogue.
+
+### LoginPage
+
+- **Sign In / Register** tabs switch the `mode` state between `'login'` and `'register'`.
+- On submit the page POSTs to `/api/auth/login` or `/api/auth/register`, stores the returned token and user in context, then the app re-renders to `BooksPage`.
+- **Demo accounts** buttons fill the form fields automatically for quick testing.
+- All errors are shown in an ARIA `role="alert"` banner.
+
+### BooksPage
+
+- Fetches books from `GET /api/books` with a 300 ms debounce when `search`, `genre`, or `showAvailable` change.
+- Displays a **stats bar** (total / available / checked-out) computed from the current results.
+- **Admins** see a **+ Add Book** button that opens `AddBookModal`.
+- Each `<BookCard>` receives `isAdmin`, `token`, `onDelete`, and `onUpdate` props.
+
+### BookCard (Admin Actions)
+
+When the logged-in user has `role === 'admin'`, two extra buttons appear at the bottom of each card:
+
+- **⬆ Check Out / ⬇ Return** — sends `PATCH /api/books/:id` with `{available: !book.available}` and calls `onUpdate(updatedBook)` to update the local list without a full re-fetch.
+- **🗑 Delete** — asks for `window.confirm`, then calls `DELETE /api/books/:id` and calls `onDelete(id)` to remove the card from the list.
+
+### AddBookModal
+
+A modal form (only visible to admins) with fields for title, author, genre, year, pages, description, and availability. On submit it posts to `POST /api/books` and calls `onAdd(book)` so the new card is prepended to the grid.
+
+---
+
+## Test Suite
+
+### Backend Tests (`jest` + `supertest`)
+
+| File | Tests | What is covered |
+|---|---|---|
+| `auth.test.js` | 9 | Login success (admin + user), wrong password, unknown email, missing fields, register success, duplicate email, health endpoint |
+| `books.test.js` | 22 | GET list/filters/auth, GET by ID (found + 404), POST (admin + user + validation), PATCH (admin update + user 403 + 404), DELETE (admin + user 403 + 404 + verify-gone) |
+
+Run: `cd backend && npm test`
+
+### Frontend Tests (`@testing-library/react`)
+
+| Describe block | Tests | What is covered |
+|---|---|---|
+| Login Page | 8 | Form renders, demo accounts, tab switch, credential fill, error alert, successful login redirect, register success, register duplicate-email error |
+| Books Page | 8 | Catalog renders, book cards, stats row, Add Book button visibility, non-admin hides Add Book, empty state, fetch error, sign-out |
+| BookCard Component | 7 | Renders fields, available/checked-out badge, no admin buttons for regular users, admin buttons for admin, delete confirmation, delete cancel, toggle availability callback |
+
+Run: `cd frontend && npm test`
+
+---
+
+## Running Locally
+
+### Prerequisites
+
+- Node.js ≥ 18
 
 ### Backend
+
 ```bash
 cd backend
 npm install
-npm start       # Starts on http://localhost:5000
+npm start          # starts on http://localhost:5000
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
 npm install
-npm start       # Starts on http://localhost:3000
+npm start          # starts on http://localhost:3000
 ```
 
-### Run All Tests
-```bash
-# Backend tests
-cd backend && npm test
+The CRA `proxy` setting (`"proxy": "http://localhost:5000"`) forwards `/api/*` requests to the backend during development.
 
-# Frontend tests
-cd frontend && CI=true npm test
-```
-
----
-
-## Demo Accounts
+### Demo Credentials
 
 | Role | Email | Password |
 |---|---|---|
 | Admin | alice@library.com | password123 |
 | User | bob@library.com | reader456 |
 
-> **Admin** users can add new books via the "+ Add Book" button.  
-> **User** accounts can browse and search the catalog but cannot add books.
-
 ---
 
-## Data Model
+## Security Notes
 
-### User
-```typescript
-{
-  id:       number   // auto-incremented
-  name:     string
-  email:    string   // unique
-  password: string   // bcrypt hash
-  role:     "admin" | "user"
-}
-```
-
-### Book
-```typescript
-{
-  id:          number   // auto-incremented
-  title:       string
-  author:      string
-  genre:       string
-  year:        number
-  pages:       number
-  description: string
-  available:   boolean
-}
-```
-
----
-
-*Document version: 1.0.0 — corresponds to the initial Library Management System release.*
+- Passwords are **bcrypt-hashed** (10 rounds) — never stored as plain text.
+- JWTs are signed with `HS256` and expire after **2 hours**.
+- The `JWT_SECRET` defaults to a hard-coded string but should be set via the `JWT_SECRET` environment variable in production.
+- The books data store is **in-memory only** — a server restart resets all changes. A real deployment would use a database (e.g. PostgreSQL with an ORM such as Prisma).
+- CORS is currently open (`cors()` with no origin restriction). In production, restrict the allowed origin to the frontend domain.

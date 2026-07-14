@@ -103,3 +103,54 @@
   font-size: 0.78rem;
   color: var(--gray-500);
 }
+
+.adminActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.adminBtn {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.adminBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkoutBtn {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.checkoutBtn:hover:not(:disabled) {
+  background: #bfdbfe;
+}
+
+.returnBtn {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.returnBtn:hover:not(:disabled) {
+  background: #bbf7d0;
+}
+
+.deleteBtn {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.deleteBtn:hover:not(:disabled) {
+  background: #fecaca;
+}
