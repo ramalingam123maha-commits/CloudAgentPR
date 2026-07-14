@@ -1,0 +1,169 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.modalHeader h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--gray-500);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.closeBtn:hover {
+  background: var(--gray-100);
+  color: var(--gray-900);
+}
+
+.form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.row .field {
+  flex: 1;
+  min-width: 140px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 9px 12px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  background: var(--gray-50);
+  transition: border-color 0.15s;
+  color: var(--gray-900);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+
+.error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.cancelBtn {
+  padding: 10px 20px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: white;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+
+.cancelBtn:hover {
+  border-color: var(--gray-300);
+  background: var(--gray-50);
+}
+
+.submitBtn {
+  padding: 10px 24px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
