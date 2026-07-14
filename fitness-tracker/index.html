@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>💪 Fitness Tracker</h1>
+            <p class="subtitle">Track your fitness journey</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Stats Dashboard -->
+            <section class="stats-section">
+                <div class="stat-card">
+                    <h3>Daily Steps</h3>
+                    <div class="stat-value" id="stepsValue">0</div>
+                    <p class="stat-label">steps</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Calories Burned</h3>
+                    <div class="stat-value" id="caloriesValue">0</div>
+                    <p class="stat-label">kcal</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Distance</h3>
+                    <div class="stat-value" id="distanceValue">0</div>
+                    <p class="stat-label">km</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Heart Rate</h3>
+                    <div class="stat-value" id="heartRateValue">0</div>
+                    <p class="stat-label">bpm</p>
+                </div>
+            </section>
+
+            <!-- Input Form -->
+            <section class="form-section">
+                <h2>Add Activity</h2>
+                <form id="activityForm" class="activity-form">
+                    <div class="form-group">
+                        <label for="activityType">Activity Type</label>
+                        <select id="activityType" required>
+                            <option value="">Select Activity</option>
+                            <option value="walking">Walking</option>
+                            <option value="running">Running</option>
+                            <option value="cycling">Cycling</option>
+                            <option value="swimming">Swimming</option>
+                            <option value="gym">Gym</option>
+                            <option value="yoga">Yoga</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration">Duration (minutes)</label>
+                        <input type="number" id="duration" min="1" max="480" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="intensity">Intensity</label>
+                        <select id="intensity" required>
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="distance">Distance (km)</label>
+                        <input type="number" id="distance" min="0" step="0.1">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Add Activity</button>
+                </form>
+            </section>
+
+            <!-- Activity Log -->
+            <section class="activity-section">
+                <h2>Activity Log</h2>
+                <div id="activityList" class="activity-list">
+                    <p class="empty-state">No activities logged yet. Start tracking!</p>
+                </div>
+            </section>
+
+            <!-- Weekly Stats -->
+            <section class="weekly-section">
+                <h2>Weekly Activity</h2>
+                <div class="weekly-chart">
+                    <div class="day-stat" id="day-0">
+                        <div class="day-bar"></div>
+                        <span class="day-label">Mon</span>
+                    </div>
+                    <div class="day-stat" id="day-1">
+                        <div class="day-bar"></div>
+                        <span class="day-label">Tue</span>
+                    </div>
+                    <div class="day-stat" id="day-2">
+                        <div class="day-bar"></div>
+                        <span class="day-label">Wed</span>
+                    </div>
+                    <div class="day-stat" id="day-3">
+                        <div class="day-bar"></div>
+                        <span class="day-label">Thu</span>
+                    </div>
+                    <div class="day-stat" id="day-4">
+                        <div class="day-bar"></div>
+                        <span class="day-label">Fri</span>
+                    </div>
+                    <div class="day-stat" id="day-5">
+                        <div class="day-bar"></div>
+                        <span class="day-label">Sat</span>
+                    </div>
+                    <div class="day-stat" id="day-6">
+                        <div class="day-bar"></div>
+                        <span class="day-label">Sun</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Fitness Tracker. Stay active, stay healthy! 🏃</p>
+        </footer>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
