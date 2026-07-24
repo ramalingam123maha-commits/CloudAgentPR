@@ -1,13 +1,26 @@
+/* Global stylesheet for the Task Manager app
+ * Imports Tailwind's three core layers and defines base CSS custom properties.
+ */
+
+/* ── Tailwind layers ────────────────────────────────────────────────────────
+ * base       – CSS reset / normalisation
+ * components – reusable class-based component styles
+ * utilities  – single-purpose utility classes (the main Tailwind API)
+ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Root-level custom properties and global defaults ──────────────────── */
 :root {
+  /* Force dark colour-scheme so browser UI elements (scrollbars, inputs) match */
   color-scheme: dark;
+  /* Primary font stack: Inter preferred, followed by system UI fallbacks */
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* ── Body reset ─────────────────────────────────────────────────────────── */
 body {
-  margin: 0;
-  min-height: 100vh;
+  margin: 0;           /* Remove default browser margin */
+  min-height: 100vh;   /* Ensure the body fills the full viewport height */
 }
