@@ -24,3 +24,23 @@ body {
   margin: 0;           /* Remove default browser margin */
   min-height: 100vh;   /* Ensure the body fills the full viewport height */
 }
+
+/* ── Solar System animations ─────────────────────────────────────────────── */
+
+/* Clockwise orbit rotation */
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Counter-rotation keeps the planet body from spinning on its own axis */
+@keyframes spinReverse {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to   { transform: translateY(-50%) rotate(-360deg); }
+}
+
+/* Gentle glow pulse for the Sun */
+@keyframes sunPulse {
+  0%, 100% { box-shadow: 0 0 40px 20px #fdd83544, 0 0 80px 40px #f57f1722; }
+  50%       { box-shadow: 0 0 60px 30px #fdd83566, 0 0 110px 55px #f57f1733; }
+}

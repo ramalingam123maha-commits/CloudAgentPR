@@ -2,6 +2,7 @@
 // Handles task state, add/toggle/delete actions, and renders the full UI
 
 import { useMemo, useState } from 'react';
+import SolarSystem from './SolarSystem';
 
 // Seed data: pre-populated tasks shown when the app first loads
 const initialTasks = [
@@ -209,6 +210,12 @@ export default function App() {
           </section>
         </section>
       </div>
+
+      {/* ── Solar System Visualizer ────────────────────────────────────────── */}
+      <section className="rounded-3xl border border-white/10 bg-slate-900/70 shadow-2xl shadow-slate-950/40 overflow-hidden">
+        <SolarSystem />
+      </section>
+
     </main>
   );
 }
