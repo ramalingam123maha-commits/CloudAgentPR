@@ -24,21 +24,6 @@ body {
   }
 }
 
-@keyframes task-slide-out {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    max-height: 120px;
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.97);
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-bottom: 0;
-  }
-}
 
 .task-row {
   transition: background-color 0.18s ease, box-shadow 0.18s ease;
@@ -52,11 +37,6 @@ body {
   animation: task-slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.task-exit {
-  animation: task-slide-out 0.28s cubic-bezier(0.55, 0, 1, 0.45) both;
-  overflow: hidden;
-  pointer-events: none;
-}
 
 /* ── Checkbox pop ── */
 .checkbox-btn {

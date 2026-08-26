@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 
 const FILTERS = ['All', 'Active', 'Completed'];
@@ -16,69 +16,40 @@ const INITIAL_TASKS = [
 ];
 
 export default function App() {
-  const [tasks, setTasks]     = useLocalStorage('todo-tasks', INITIAL_TASKS);
-  const [title, setTitle]     = useState('');
+  const [tasks, setTasks]       = useLocalStorage('todo-tasks', INITIAL_TASKS);
+  const [title, setTitle]       = useState('');
   const [priority, setPriority] = useState('Medium');
-  const [filter, setFilter]   = useState('All');
-  const [visible, setVisible] = useState(new Set(tasks.map((t) => t.id)));
+  const [filter, setFilter]     = useState('All');
   const inputRef = useRef(null);
 
-  // Keep visible set in sync when tasks change from storage
-  useEffect(() => {
-    setVisible(new Set(tasks.map((t) => t.id)));
-  }, []); // only on mount — additions/deletions are managed manually
+  const completed = tasks.filter((t) => t.completed).length;
+  const remaining = tasks.length - completed;
 
-  const stats = useMemo(() => {
-    const completed = tasks.filter((t) => t.completed).length;
-    return { total: tasks.length, completed, remaining: tasks.length - completed };
-  }, [tasks]);
-
-  const filtered = useMemo(() => {
-    if (filter === 'Active')    return tasks.filter((t) => !t.completed);
-    if (filter === 'Completed') return tasks.filter((t) =>  t.completed);
-    return tasks;
-  }, [tasks, filter]);
+  const filtered =
+    filter === 'Active'    ? tasks.filter((t) => !t.completed) :
+    filter === 'Completed' ? tasks.filter((t) =>  t.completed) :
+    tasks;
 
   function addTask(e) {
     e.preventDefault();
     const trimmed = title.trim();
     if (!trimmed) return;
-    const newTask = { id: Date.now(), title: trimmed, completed: false, priority };
-    setTasks((cur) => [newTask, ...cur]);
-    setVisible((cur) => new Set([...cur, newTask.id]));
+    setTasks((cur) => [{ id: Date.now(), title: trimmed, completed: false, priority }, ...cur]);
     setTitle('');
     setPriority('Medium');
     inputRef.current?.focus();
   }
 
   function toggleTask(id) {
-    setTasks((cur) =>
-      cur.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)),
-    );
+    setTasks((cur) => cur.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
   }
 
-  // Animate out then remove
   function removeTask(id) {
-    setVisible((cur) => {
-      const next = new Set(cur);
-      next.delete(id);
-      return next;
-    });
-    setTimeout(() => {
-      setTasks((cur) => cur.filter((t) => t.id !== id));
-    }, 300);
+    setTasks((cur) => cur.filter((t) => t.id !== id));
   }
 
   function clearCompleted() {
-    const completedIds = tasks.filter((t) => t.completed).map((t) => t.id);
-    setVisible((cur) => {
-      const next = new Set(cur);
-      completedIds.forEach((id) => next.delete(id));
-      return next;
-    });
-    setTimeout(() => {
-      setTasks((cur) => cur.filter((t) => !t.completed));
-    }, 300);
+    setTasks((cur) => cur.filter((t) => !t.completed));
   }
 
   return (
@@ -102,9 +73,9 @@ export default function App() {
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
-              <Stat label="Total"  value={stats.total}     />
-              <Stat label="Done"   value={stats.completed} />
-              <Stat label="Open"   value={stats.remaining} />
+              <Stat label="Total"  value={tasks.length} />
+              <Stat label="Done"   value={completed}    />
+              <Stat label="Open"   value={remaining}    />
             </div>
           </div>
         </section>
@@ -162,7 +133,7 @@ export default function App() {
                 <p className="mt-1 text-sm text-slate-400">Click a task to mark it complete.</p>
               </div>
               <div className="flex items-center gap-3">
-                {stats.completed > 0 && (
+                {completed > 0 && (
                   <button
                     type="button"
                     onClick={clearCompleted}
@@ -191,14 +162,14 @@ export default function App() {
                   }`}
                 >
                   {f}
-                  {f === 'Active'    && stats.remaining > 0 && (
+                  {f === 'Active'    && remaining > 0 && (
                     <span className="ml-1.5 rounded-full bg-slate-950/30 px-1.5 py-0.5 text-xs">
-                      {stats.remaining}
+                      {remaining}
                     </span>
                   )}
-                  {f === 'Completed' && stats.completed > 0 && (
+                  {f === 'Completed' && completed > 0 && (
                     <span className="ml-1.5 rounded-full bg-slate-950/30 px-1.5 py-0.5 text-xs">
-                      {stats.completed}
+                      {completed}
                     </span>
                   )}
                 </button>
@@ -214,7 +185,6 @@ export default function App() {
                   <TaskRow
                     key={task.id}
                     task={task}
-                    visible={visible.has(task.id)}
                     onToggle={toggleTask}
                     onRemove={removeTask}
                   />
@@ -230,13 +200,9 @@ export default function App() {
 
 /* ── Sub-components ── */
 
-function TaskRow({ task, visible, onToggle, onRemove }) {
+function TaskRow({ task, onToggle, onRemove }) {
   return (
-    <article
-      className={`task-row flex items-center gap-4 rounded-2xl border border-white/8 bg-white/5 p-4 ${
-        visible ? 'task-enter' : 'task-exit'
-      }`}
-    >
+    <article className="task-row flex items-center gap-4 rounded-2xl border border-white/8 bg-white/5 p-4 task-enter">
       {/* Checkbox */}
       <button
         type="button"
@@ -289,11 +255,11 @@ function TaskRow({ task, visible, onToggle, onRemove }) {
 
 function EmptyState({ filter }) {
   const messages = {
-    All:       { icon: '📋', heading: 'No tasks yet', sub: 'Add your first task using the form on the left.' },
-    Active:    { icon: '🎉', heading: 'All done!',    sub: 'No active tasks — you\'re on top of things.' },
-    Completed: { icon: '⏳', heading: 'Nothing completed', sub: 'Complete a task to see it here.' },
+    All:       { icon: '📋', heading: 'No tasks yet',        sub: 'Add your first task using the form on the left.' },
+    Active:    { icon: '🎉', heading: 'All done!',           sub: "No active tasks — you're on top of things." },
+    Completed: { icon: '⏳', heading: 'Nothing completed',   sub: 'Complete a task to see it here.' },
   };
-  const { icon, heading, sub } = messages[filter] ?? messages.All;
+  const { icon, heading, sub } = messages[filter];
   return (
     <div className="empty-state flex flex-col items-center gap-3 rounded-2xl border border-dashed border-white/10 py-12 text-center">
       <span className="text-4xl">{icon}</span>
