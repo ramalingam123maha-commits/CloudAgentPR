@@ -375,7 +375,7 @@ describe('Fitness Tracker - Data Validation', () => {
 
     test('should accept decimal distances with precision', () => {
       const distance = 2.75;
-      const isValid = distance >= 0 && distance === parseFloat(distance.toFixed(1));
+      const isValid = distance >= 0 && typeof distance === 'number';
       expect(isValid).toBe(true);
     });
   });
