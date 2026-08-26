@@ -10,7 +10,7 @@ export default function Navbar() {
       <div className={styles.inner}>
         <div className={styles.logo}>
           <span className={styles.logoIcon}>📚</span>
-          <span className={styles.logoText}>LibraryMS</span>
+          <span className={styles.logoText}>Flywave </span>
         </div>
 
         <div className={styles.right}>

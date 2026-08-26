@@ -5,7 +5,7 @@
 
 .left {
   flex: 1;
-  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 60%, #1e1b4b 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 60%, #166534 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,7 +160,7 @@
 .field input:focus {
   border-color: var(--primary);
   background: white;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
 }
 
 .error {

@@ -170,7 +170,7 @@ describe('Books Page', () => {
     render(<App />);
 
     await waitFor(() => expect(screen.getByText(/Book Catalog/i)).toBeInTheDocument());
-    expect(screen.getByText(/LibraryMS/i)).toBeInTheDocument();
+    expect(screen.getByText(/Flywave/i)).toBeInTheDocument();
   });
 
   it('displays book cards with title, author and year', async () => {

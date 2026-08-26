@@ -66,7 +66,7 @@ export default function LoginPage() {
         <div className={styles.card}>
           <div className={styles.logoRow}>
             <span className={styles.logoIcon}>📚</span>
-            <span className={styles.logoText}>LibraryMS</span>
+            <span className={styles.logoText}>Flywave </span>
           </div>
 
           <div className={styles.tabs}>

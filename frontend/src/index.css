@@ -11,9 +11,9 @@ body {
 }
 
 :root {
-  --primary: #4f46e5;
-  --primary-dark: #3730a3;
-  --primary-light: #e0e7ff;
+  --primary: #22c55e;
+  --primary-dark: #16a34a;
+  --primary-light: #dcfce7;
   --success: #059669;
   --danger: #dc2626;
   --warning: #d97706;
